@@ -8,48 +8,50 @@
 #include <Arduino.h>
 
 // Required for SSL
-#include "openssl/ssl.h"
+#include "esp_tls.h"
 #undef read
 
 // Internal includes
-#include "HTTPServer.hpp"
-#include "HTTPSServerConstants.hpp"
-#include "HTTPHeaders.hpp"
 #include "HTTPHeader.hpp"
+#include "HTTPHeaders.hpp"
+#include "HTTPSConnection.hpp"
+#include "HTTPSServerConstants.hpp"
+#include "HTTPServer.hpp"
+#include "ResolvedResource.hpp"
 #include "ResourceNode.hpp"
 #include "ResourceResolver.hpp"
-#include "ResolvedResource.hpp"
-#include "HTTPSConnection.hpp"
 #include "SSLCert.hpp"
 
-namespace httpsserver {
+namespace httpsserver
+{
 
-/**
- * \brief Main implementation of the HTTP Server with TLS support. Use HTTPServer for plain HTTP
- */
-class HTTPSServer : public HTTPServer {
-public:
-  HTTPSServer(SSLCert * cert, const uint16_t portHTTPS = 443, const uint8_t maxConnections = 4, const in_addr_t bindAddress = 0);
-  virtual ~HTTPSServer();
+  /**
+   * \brief Main implementation of the HTTP Server with TLS support. Use HTTPServer for plain HTTP
+   */
+  class HTTPSServer : public HTTPServer
+  {
+  public:
+    HTTPSServer(SSLCert *cert, const uint16_t portHTTPS = 443, const uint8_t maxConnections = 4, const in_addr_t bindAddress = 0);
+    virtual ~HTTPSServer();
 
-private:
-  // Static configuration. Port, keys, etc. ====================
-  // Certificate that should be used (includes private key)
-  SSLCert * _cert;
- 
-  //// Runtime data ============================================
-  SSL_CTX * _sslctx;
-  // Status of the server: Are we running, or not?
+  private:
+    // Static configuration. Port, keys, etc. ====================
+    // Certificate that should be used (includes private key)
+    SSLCert *_cert;
 
-  // Setup functions
-  virtual uint8_t setupSocket();
-  virtual void teardownSocket();
-  uint8_t setupSSLCTX();
-  uint8_t setupCert();
+    //// Runtime data ============================================
+    SSL_CTX *_sslctx;
+    // Status of the server: Are we running, or not?
 
-  // Helper functions
-  virtual int createConnection(int idx);
-};
+    // Setup functions
+    virtual uint8_t setupSocket();
+    virtual void teardownSocket();
+    uint8_t setupSSLCTX();
+    uint8_t setupCert();
+
+    // Helper functions
+    virtual int createConnection(int idx);
+  };
 
 } /* namespace httpsserver */
 

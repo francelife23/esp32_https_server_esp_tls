@@ -6,7 +6,7 @@
 #include <string>
 
 // Required for SSL
-#include "openssl/ssl.h"
+#include "esp_tls.h"
 #undef read
 
 // Required for sockets
@@ -14,44 +14,45 @@
 #undef read
 #include "lwip/sockets.h"
 
-#include "HTTPSServerConstants.hpp"
 #include "HTTPConnection.hpp"
-#include "HTTPHeaders.hpp"
 #include "HTTPHeader.hpp"
-#include "ResourceResolver.hpp"
-#include "ResolvedResource.hpp"
-#include "ResourceNode.hpp"
+#include "HTTPHeaders.hpp"
 #include "HTTPRequest.hpp"
 #include "HTTPResponse.hpp"
+#include "HTTPSServerConstants.hpp"
+#include "ResolvedResource.hpp"
+#include "ResourceNode.hpp"
+#include "ResourceResolver.hpp"
 
-namespace httpsserver {
+namespace httpsserver
+{
 
-/**
- * \brief Connection class for an open TLS-enabled connection to an HTTPSServer
- */
-class HTTPSConnection : public HTTPConnection {
-public:
-  HTTPSConnection(ResourceResolver * resResolver);
-  virtual ~HTTPSConnection();
+  /**
+   * \brief Connection class for an open TLS-enabled connection to an HTTPSServer
+   */
+  class HTTPSConnection : public HTTPConnection
+  {
+  public:
+    HTTPSConnection(ResourceResolver *resResolver);
+    virtual ~HTTPSConnection();
 
-  virtual int initialize(int serverSocketID, SSL_CTX * sslCtx, HTTPHeaders *defaultHeaders);
-  virtual void closeConnection();
-  virtual bool isSecure();
+    virtual int initialize(int serverSocketID, SSL_CTX *sslCtx, HTTPHeaders *defaultHeaders);
+    virtual void closeConnection();
+    virtual bool isSecure();
 
-protected:
-  friend class HTTPRequest;
-  friend class HTTPResponse;
+  protected:
+    friend class HTTPRequest;
+    friend class HTTPResponse;
 
-  virtual size_t readBytesToBuffer(byte* buffer, size_t length);
-  virtual size_t pendingByteCount();
-  virtual bool canReadData();
-  virtual size_t writeBuffer(byte* buffer, size_t length);
+    virtual size_t readBytesToBuffer(byte *buffer, size_t length);
+    virtual size_t pendingByteCount();
+    virtual bool canReadData();
+    virtual size_t writeBuffer(byte *buffer, size_t length);
 
-private:
-  // SSL context for this connection
-  SSL * _ssl;
-
-};
+  private:
+    // SSL context for this connection
+    SSL *_ssl;
+  };
 
 } /* namespace httpsserver */
 
